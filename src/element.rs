@@ -1,6 +1,6 @@
 use either::Either;
 
-pub trait ElementLike: std::fmt::Debug {
+pub trait ElementLike: std::fmt::Debug + Clone {
     fn atomic_number(&self) -> u8;
 }
 

@@ -10,7 +10,18 @@ pub trait AtomLike: ChemObject {
 }
 
 pub struct Atom<T: ElementLike = FuzzyNuclide> {
-    pub element: T,
-    pub charge: i8,
+    element: T,
+    charge: i8,
 }
 
+impl<T: ElementLike> ChemObject for Atom<T> {
+}
+
+impl<T: ElementLike> AtomLike for Atom<T> {
+    fn element(&self) -> impl ElementLike {
+        self.element.clone()
+    }
+    fn charge(&self) -> i8 {
+        self.charge
+    }
+}
