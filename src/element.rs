@@ -28,16 +28,65 @@ impl ElementLike for Nuclide {
     }
 }
 
+impl Nuclide {
+    pub fn new(proton_num: u8, neutron_num: u8) -> Self {
+        Self { proton_num, neutron_num }
+    }
+}
+
+// impl From<Element> for Nuclide {
+//     fn from(value: Element) -> Self {
+//         
+//     }
+// }
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Element {
-    H,
+    H,                                                                  He,
+    Li, Be,                                          B,  C,  N,  O,  F, Ne,
+    Na, Mg,                                         Al, Si,  P,  S, Cl, Ar,
+     K, Ca, Sc, Ti,  V, Cr, Mn, Fe, Co, Ni, Cu, Zn, Ga, Ge, As, Se, Br, Kr,
+    Rb, Sr,  Y, Zr, Nb, Mo, Tc, Ru, Rh, Pd, Ag, Cd, In, Sn, Sb, Te,  I, Xe,
+    Cs, Ba,
+            La, Ce, Pr, Nd, Pm, Sm, Eu, Gd, Tb, Dy, Ho, Er, Tm, Yb, Lu,
+                Hf, Ta,  W, Re, Os, Ir, Pt, Au, Hg, Tl, Pb, Bi, Po, At, Rn,
+    Fr, Ra,
+            Ac, Th, Pa,  U, Np, Pu, Am, Cm, Bk, Cf, Es, Fm, Md, No, Lr,
+                Rf, Db, Sg, Bh, Hs, Mt, Ds, Rg, Cn, Nh, Fl, Mc, Lv, Ts, Og,
 }
 
 impl ElementLike for Element {
     fn atomic_number(&self) -> u8 {
+        *self as u8
+    }
+}
+
+impl Element {
+    pub fn all_elements() -> [Element; 118] {
         use Element::*;
-        match self {
-            H => 1,
+        [
+            H,                                                                  He,
+            Li, Be,                                          B,  C,  N,  O,  F, Ne,
+            Na, Mg,                                         Al, Si,  P,  S, Cl, Ar,
+             K, Ca, Sc, Ti,  V, Cr, Mn, Fe, Co, Ni, Cu, Zn, Ga, Ge, As, Se, Br, Kr,
+            Rb, Sr,  Y, Zr, Nb, Mo, Tc, Ru, Rh, Pd, Ag, Cd, In, Sn, Sb, Te,  I, Xe,
+            Cs, Ba,
+                    La, Ce, Pr, Nd, Pm, Sm, Eu, Gd, Tb, Dy, Ho, Er, Tm, Yb, Lu,
+                        Hf, Ta,  W, Re, Os, Ir, Pt, Au, Hg, Tl, Pb, Bi, Po, At, Rn,
+            Fr, Ra,
+                    Ac, Th, Pa,  U, Np, Pu, Am, Cm, Bk, Cf, Es, Fm, Md, No, Lr,
+                        Rf, Db, Sg, Bh, Hs, Mt, Ds, Rg, Cn, Nh, Fl, Mc, Lv, Ts, Og,
+        ]
+    }
+    pub fn from_atomic_number(atomic_number: u8) -> Option<Self> {
+        if atomic_number > 0 {
+            let i = atomic_number - 1;
+            Some(Self::all_elements()[i as usize])
+        } else {
+            None
         }
+    }
+    pub fn specify_neutrons(&self, neutron_num: u8) -> Nuclide {
+        Nuclide { proton_num: self.atomic_number(), neutron_num }
     }
 }
