@@ -1,4 +1,4 @@
 pub mod element;
 pub mod atom;
 pub mod bond;
-pub mod molcule;
+pub mod molecule;

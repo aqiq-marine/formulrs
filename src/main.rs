@@ -1,7 +1,7 @@
 mod element;
 mod atom;
 mod bond;
-mod molcule;
+mod molecule;
 
 fn main() {
     println!("Hello, world!");
