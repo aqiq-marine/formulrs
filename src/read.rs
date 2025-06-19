@@ -6,7 +6,7 @@ use purr::graph::Builder;
 use purr::feature::{ AtomKind, BondKind, Aliphatic, Aromatic };
 use purr::read::read;
 
-fn smiles_to_molecule(smiles: String) -> Result<Molecule<SmilesAtom, SmilesBond>, SmilesParseError> {
+pub fn smiles_to_molecule(smiles: String) -> Result<Molecule<SmilesAtom, SmilesBond>, SmilesParseError> {
     let mut builder = Builder::new();
     read(smiles.as_str(), &mut builder, None)
         .map_err(|_| SmilesParseError::ParseError)?;
@@ -32,6 +32,7 @@ fn purr_to_formulrs(builder: Builder) -> Option<Molecule<SmilesAtom, SmilesBond>
     Some(mol)
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SmilesParseError {
     ParseError,
     Invalid,
@@ -84,11 +85,11 @@ fn purr_atom_to_smiles_atom(atom: AtomKind) -> Option<SmilesAtom> {
         AtomKind::Star => None,
         AtomKind::Aliphatic(elm) => Some(aliphatic_to_smiles_atom!(elm, B, C, N, O, S, P, F, Cl, Br, I, At, Ts)),
         AtomKind::Aromatic(elm) => Some(aromatic_to_smiles_atom!(elm, B, C, N, O, P, S)),
-        AtomKind::Bracket { isotope, symbol, configuration, hcount, charge, map } => match symbol {
+        AtomKind::Bracket { isotope, symbol, configuration, hcount, charge, map } => (match symbol {
             purr::feature::BracketSymbol::Star => None,
             purr::feature::BracketSymbol::Element(elm) => Some(bracket_element_to_smiles_atom!(elm, H, He, Li, Be, B, C, N, O, F, Ne, Na, Mg, Al, Si, P, S, Cl, Ar, K, Ca, Sc, Ti, V, Cr, Mn, Fe, Co, Ni, Cu, Zn, Ga, Ge, As, Se, Br, Kr, Rb, Sr, Y, Zr, Nb, Mo, Tc, Ru, Rh, Pd, Ag, Cd, In, Sn, Sb, Te, I, Xe, Cs, Ba, La, Ce, Pr, Nd, Pm, Sm, Eu, Gd, Tb, Dy, Ho, Er, Tm, Yb, Lu, Hf, Ta, W, Re, Os, Ir, Pt, Au, Hg, Tl, Pb, Bi, Po, At, Rn, Fr, Ra, Ac, Th, Pa, U, Np, Pu, Am, Cm, Bk, Cf, Es, Fm, Md, No, Lr, Rf, Db, Sg, Bh, Hs, Mt, Ds, Rg, Cn, Nh, Fl, Mc, Lv, Ts, Og).into()),
             purr::feature::BracketSymbol::Aromatic(elm) => Some(bracket_aromatic_to_smiles_atom!(elm, B, C, N, O, S, P, Se, As).into()),
-        },
+        }).map(|elm: SmilesAtom| elm.h_count(hcount.map(|h| h as u8).unwrap_or(0)).charge(charge.map(|c| c as i8).unwrap_or(0))),
     }
 }
 

@@ -32,6 +32,7 @@ impl<T: ElementLike> From<T> for Atom<T> {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SmilesAtom {
     element: FuzzyNuclide,
     charge: i8,
@@ -41,6 +42,7 @@ pub struct SmilesAtom {
     id: Option<u8>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Chirality {
     R, 
     S,
@@ -62,7 +64,7 @@ impl SmilesAtom {
     pub fn h_count(self, h_count: u8) -> Self {
         Self {h_count, ..self}
     }
-    pub fn  id(self, id: u8) -> Self {
+    pub fn id(self, id: u8) -> Self {
         Self {id: Some(id), ..self}
     }
     pub fn chiral(self, chiral: Chirality) -> Self {
@@ -70,6 +72,9 @@ impl SmilesAtom {
     }
     pub fn aromatic(self) -> Self {
         Self {is_aromatic: true, ..self}
+    }
+    pub fn charge(self, charge: i8) -> Self {
+        Self {charge, ..self}
     }
     pub fn get_h_count(&self) -> u8 {
         self.h_count

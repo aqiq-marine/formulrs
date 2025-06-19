@@ -10,3 +10,4 @@ impl<A: AtomLike, B: BondLike> Molecule<A, B> {
         Self { atoms, bonds }
     }
 }
+
