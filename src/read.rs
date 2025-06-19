@@ -6,7 +6,7 @@ use purr::graph::Builder;
 use purr::feature::{ AtomKind, BondKind, Aliphatic, Aromatic };
 use purr::read::read;
 
-fn smiles_to_molecule(smiles: String) -> Result<Molecule<SmilesAtom, BondType>, SmilesParseError> {
+fn smiles_to_molecule(smiles: String) -> Result<Molecule<SmilesAtom, SmilesBond>, SmilesParseError> {
     let mut builder = Builder::new();
     read(smiles.as_str(), &mut builder, None)
         .map_err(|_| SmilesParseError::ParseError)?;
@@ -14,7 +14,7 @@ fn smiles_to_molecule(smiles: String) -> Result<Molecule<SmilesAtom, BondType>, 
     purr_to_formulrs(builder).ok_or(SmilesParseError::Invalid)
 }
 
-fn purr_to_formulrs(builder: Builder) -> Option<Molecule<SmilesAtom, BondType>> {
+fn purr_to_formulrs(builder: Builder) -> Option<Molecule<SmilesAtom, SmilesBond>> {
     let mol = builder.build().ok()?;
     let mut bonds = vec![vec![]; mol.len()];
     let mut atoms = vec![];
@@ -23,7 +23,7 @@ fn purr_to_formulrs(builder: Builder) -> Option<Molecule<SmilesAtom, BondType>> 
         let a = purr_atom_to_smiles_atom(atom.kind)?;
         atoms.push(a);
         for b in atom.bonds {
-            bonds[i].push((b.tid, purr_bond_to_bond(b.kind)?));
+            bonds[i].push((b.tid, purr_bond_to_bond(b.kind)));
         }
     }
 
@@ -93,6 +93,15 @@ fn purr_atom_to_smiles_atom(atom: AtomKind) -> Option<SmilesAtom> {
 }
 
 
-fn purr_bond_to_bond(bond: BondKind) -> Option<BondType> {
-    None
+fn purr_bond_to_bond(bond: BondKind) -> SmilesBond {
+    match bond {
+        BondKind::Elided => SmilesBond::Single,
+        BondKind::Single => SmilesBond::Single,
+        BondKind::Double => SmilesBond::Double,
+        BondKind::Triple => SmilesBond::Triple,
+        BondKind::Quadruple => SmilesBond::Quadruple,
+        BondKind::Aromatic => SmilesBond::Aromatic,
+        BondKind::Up => SmilesBond::Single,
+        BondKind::Down => SmilesBond::Single,
+    }
 }
