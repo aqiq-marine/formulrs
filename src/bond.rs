@@ -2,7 +2,6 @@ pub trait BondLike {
     fn order(&self) -> f32;
 }
 
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SmilesBond {
     Single,
