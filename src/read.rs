@@ -6,9 +6,9 @@ use purr::graph::Builder;
 use purr::feature::{ AtomKind, BondKind, Aliphatic, Aromatic };
 use purr::read::read;
 
-pub fn smiles_to_molecule(smiles: String) -> Result<Molecule<SmilesAtom, SmilesBond>, SmilesParseError> {
+pub fn smiles_to_molecule<T: AsRef<str>>(smiles: T) -> Result<Molecule<SmilesAtom, SmilesBond>, SmilesParseError> {
     let mut builder = Builder::new();
-    read(smiles.as_str(), &mut builder, None)
+    read(smiles.as_ref(), &mut builder, None)
         .map_err(|_| SmilesParseError::ParseError)?;
 
     purr_to_formulrs(builder).ok_or(SmilesParseError::Invalid)
